@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Varela Round", "Segoe UI", ui-rounded, system-ui, sans-serif;
+}
+
+html, body {
+  font-family: var(--font-sans);
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@keyframes pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.animate-pop { animation: pop 0.35s ease-out both; }
+
+@keyframes bigpop {
+  0% { transform: scale(0) rotate(-12deg); opacity: 0; }
+  60% { transform: scale(1.2) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.animate-bigpop { animation: bigpop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+.animate-shake { animation: shake 0.35s ease both; }
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.animate-floaty { animation: floaty 2.4s ease-in-out infinite; }
+
+@keyframes glowpulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  50% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0); }
+}
+.animate-glowpulse { animation: glowpulse 1.2s ease-in-out infinite; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50% { opacity: 0.9; transform: scale(1.2); }
+}
+
+/* חפץ שנבדק ולא היה בו כלום - מתנדנד ומתעמעם */
+@keyframes searched {
+  0% { transform: rotate(0deg); }
+  30% { transform: rotate(-14deg); }
+  60% { transform: rotate(12deg); }
+  100% { transform: rotate(0deg); }
+}
+.anim-searched { animation: searched 0.45s ease both; }
+
+/* מפתח שנמצא - קופץ החוצה */
+@keyframes foundkey {
+  0% { transform: scale(0) rotate(-40deg); opacity: 0; }
+  60% { transform: scale(1.5) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.anim-foundkey { animation: foundkey 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* פד של סימון שנדלק */
+@keyframes padflash {
+  0%, 100% { filter: brightness(1); transform: scale(1); }
+  50% { filter: brightness(1.9); transform: scale(1.12); }
+}
+.anim-padflash { animation: padflash 0.45s ease both; }
+
+/* דלת שנפתחת בסוף */
+@keyframes dooropen {
+  0% { transform: perspective(600px) rotateY(0deg); }
+  100% { transform: perspective(600px) rotateY(-80deg); opacity: 0.25; }
+}
+.anim-dooropen { animation: dooropen 1.4s ease-in 0.3s both; transform-origin: right center; }
