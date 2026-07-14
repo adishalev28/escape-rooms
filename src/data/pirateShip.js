@@ -9,6 +9,9 @@ export default {
   type: 'scene',
   title: 'ספינת הפיראטים',
   emoji: '🏴‍☠️',
+  guideEmoji: '🦜',
+  rescue: 'captain',
+  parTime: 420,
   bg: 'from-slate-900 via-blue-950 to-cyan-950',
   intro: [
     'אוי לא! נרדמתם בתוך מחסן של ספינת פיראטים! 😱',
@@ -17,13 +20,13 @@ export default {
     'הסתובבו עם החצים, לחצו על חפצים, ותברחו! 🍀',
   ],
   treasure: { emoji: '🧭', name: 'מצפן הזהב', desc: 'המצפן שתמיד מוצא את הדרך הביתה' },
-  outro: 'הדלת נפתחת... הים מחכה! קפצתם לסירה וברחתם מהספינה! 🚣',
+  outro: 'הדלת נפתחת... ומאחוריה תא נוסף - קפטן, הלוחם מזירת האנגלית, היה כלוא שם! קפצתם יחד לסירה וברחתם! 🚣',
 
   items: {
-    rustyKey: { emoji: '🗝️', en: 'Key', he: 'מפתח' },
-    banana: { emoji: '🍌', en: 'Banana', he: 'בננה' },
+    rustyKey: { emoji: '🗝️', en: 'Key', he: 'מפתח', word: 'key' },
+    banana: { emoji: '🍌', en: 'Banana', he: 'בננה', word: 'banana' },
     note: { emoji: '📜', en: 'Note', he: 'הפתק של התוכי', view: 'note' },
-    goldKey: { emoji: '🔑', en: 'Gold key', he: 'מפתח הזהב' },
+    goldKey: { emoji: '🔑', en: 'Gold key', he: 'מפתח הזהב', word: 'gold' },
   },
 
   scenes: [
@@ -73,6 +76,7 @@ export default {
           area: { x: 50, y: 370, w: 175, h: 205 },
           onTap(api) {
             api.say('Apple!')
+            api.learnWord('apple')
             api.pulse('apples')
           },
         },
@@ -163,6 +167,7 @@ export default {
           area: { x: 75, y: 100, w: 200, h: 200 },
           onTap(api) {
             api.say('Fish!')
+            api.learnWord('fish')
             api.sfx.blub()
             api.pulse('porthole')
           },
@@ -238,6 +243,7 @@ export default {
           area: { x: 60, y: 180, w: 150, h: 160 },
           onTap(api) {
             api.say('Star!')
+            api.learnWord('star')
             api.pulse('stars')
           },
         },

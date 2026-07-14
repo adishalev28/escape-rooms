@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { rand } from '../utils.js'
 import { sfx, note } from '../audio.js'
+import { say } from '../speech.js'
 import HintBox from '../components/HintBox.jsx'
 
 // חידת סימון: התוכי מנגן רצף - חוזרים עליו. זיכרון עבודה טהור!
@@ -28,17 +29,20 @@ export default function SequencePuzzle({ puzzle, onSolved }) {
     setPlaying(true)
     setStatus('idle')
     setPos(0)
+    // כשלפדים יש מילה (צבעים!) - קצב איטי יותר והמילה נאמרת באנגלית
+    const step = puzzle.pads.some((p) => p.word) ? 1050 : 750
     s.forEach((padIdx, i) => {
       later(() => {
         flash(padIdx)
         note(puzzle.pads[padIdx].tone)
-      }, 600 + i * 750)
+        if (puzzle.pads[padIdx].word) say(puzzle.pads[padIdx].word)
+      }, 600 + i * step)
     })
     later(() => {
       setFlashing(null)
       setPlaying(false)
       setStatus('your-turn')
-    }, 600 + s.length * 750)
+    }, 600 + s.length * step)
   }
 
   // מנגן את הרצף בתחילת כל סיבוב
@@ -50,6 +54,7 @@ export default function SequencePuzzle({ puzzle, onSolved }) {
   function press(padIdx) {
     if (playing || status !== 'your-turn') return
     note(puzzle.pads[padIdx].tone)
+    if (puzzle.pads[padIdx].word) say(puzzle.pads[padIdx].word)
     flash(padIdx)
     if (padIdx === seq[pos]) {
       const nextPos = pos + 1

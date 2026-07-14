@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { sfx } from '../audio.js'
 
 // מערכת רמזים: נר 🕯️ שנפתח בהדרגה - ההבדל בין אתגר לתסכול
-export default function HintBox({ hints }) {
+export default function HintBox({ hints, onReveal }) {
   const [shown, setShown] = useState(0)
 
   if (!hints?.length) return null
@@ -20,7 +20,7 @@ export default function HintBox({ hints }) {
       )}
       {shown < hints.length && (
         <button
-          onClick={() => { sfx.tap(); setShown((n) => n + 1) }}
+          onClick={() => { sfx.tap(); setShown((n) => n + 1); onReveal?.() }}
           className="bg-white/10 border border-white/20 rounded-full px-5 py-2 text-white/80 font-bold active:scale-95 transition-transform"
         >
           {shown === 0 ? 'צריך רמז? 🕯️' : 'עוד רמז 🕯️'}

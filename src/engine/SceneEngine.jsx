@@ -5,6 +5,9 @@ import { say, sayHe } from '../speech.js'
 import Starfield from '../components/Starfield.jsx'
 import Confetti from '../components/Confetti.jsx'
 import HintBox from '../components/HintBox.jsx'
+import Brawler from '../components/Brawler.jsx'
+import { HEROES } from '../data/heroes.js'
+import { MEDALS } from '../data/medals.js'
 import Inventory from './Inventory.jsx'
 import GuideBubble from './GuideBubble.jsx'
 import ItemToast from './ItemToast.jsx'
@@ -13,8 +16,10 @@ import SimonOverlay from './overlays/SimonOverlay.jsx'
 import CodeWheel from './overlays/CodeWheel.jsx'
 import ListenLock from './overlays/ListenLock.jsx'
 import NoteView from './overlays/NoteView.jsx'
+import Keypad from './overlays/Keypad.jsx'
 
-const OVERLAY_COMPS = { simon: SimonOverlay, code: CodeWheel, listen: ListenLock, note: NoteView }
+const OVERLAY_COMPS = { simon: SimonOverlay, code: CodeWheel, listen: ListenLock, note: NoteView, keypad: Keypad }
+const POWER_COOLDOWN = 45000
 
 function fmt(sec) {
   const m = Math.floor(sec / 60)
@@ -22,9 +27,10 @@ function fmt(sec) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
-// מנוע point-and-click: סצנות SVG, נקודות לחיצה, מלאי, תוכי מדריך שמדבר אנגלית
+// מנוע point-and-click: סצנות SVG, נקודות לחיצה, מלאי, מדריך שמדבר אנגלית,
+// כוחות של לוחמים שניצלו, מדליות ואלבום מילים
 export default function SceneEngine({ room, onExit }) {
-  const { best, finishRoom } = useGame()
+  const { best, rescued, finishRoom, learnWord } = useGame()
   const [stage, setStage] = useState('intro') // intro | scene | outro
   const [introPage, setIntroPage] = useState(0)
   const [seconds, setSeconds] = useState(0)
@@ -37,7 +43,14 @@ export default function SceneEngine({ room, onExit }) {
   const [bubble, setBubble] = useState(null)
   const [toast, setToast] = useState(null)
   const [fx, setFx] = useState(null)
+  const [sparkle, setSparkle] = useState(null) // כוח המצפן - נקודה זוהרת
+  const [xray, setXray] = useState(false)      // כוח זוהר הירח
+  const [powerCd, setPowerCd] = useState({})   // powerId -> timestamp שבו נגמר הקירור
+  const [setup] = useState(() => (room.setup ? room.setup() : null)) // אקראיות למשחק חוזר
+  const [earnedMedals, setEarnedMedals] = useState([])
   const secondsRef = useRef(0)
+  const hintsRef = useRef(0)
+  const mistakesRef = useRef(0)
   const wonRef = useRef(false)
   const timers = useRef([])
 
@@ -61,6 +74,7 @@ export default function SceneEngine({ room, onExit }) {
   // ה-API שקובץ החדר מקבל - כל הלוגיקה של החדר יושבת בנתונים
   const api = {
     flags,
+    setup,
     has: (f) => !!flags[f],
     set: (f) => setFlags((s) => (s[f] ? s : { ...s, [f]: true })),
     hasItem: (id) => inv.includes(id),
@@ -69,6 +83,7 @@ export default function SceneEngine({ room, onExit }) {
       setInv((v) => (v.includes(id) ? v : [...v, id]))
       sfx.pickup()
       say(it.en)
+      if (it.word) learnWord(it.word)
       setToast({ ...it, key: Date.now() })
       later(() => setToast(null), 1900)
     },
@@ -77,13 +92,16 @@ export default function SceneEngine({ room, onExit }) {
     say,
     sayHe,
     sfx,
+    learnWord,
+    mistake: () => { mistakesRef.current += 1 },
+    // כוח האוזן הביונית - זמין בתוך מנעולי הקשבה אם רובו ניצל
+    slow: rescued.includes('robo'),
     parrot(en, he) {
       setBubble({ en, he, key: Date.now() })
       say(en)
     },
-    // התוכי חוזר על ההוראה הנוכחית
     repeat() {
-      const g = room.guide(flags)
+      const g = room.guide(flags, setup)
       if (!g) return
       setBubble({ ...g, key: Date.now() })
       say(g.en)
@@ -97,8 +115,8 @@ export default function SceneEngine({ room, onExit }) {
     later,
   }
 
-  // התוכי המדריך - הוראה באנגלית לפי ההתקדמות
-  const guide = stage === 'scene' ? room.guide(flags) : null
+  // המדריך - הוראה באנגלית לפי ההתקדמות
+  const guide = stage === 'scene' ? room.guide(flags, setup) : null
   const guideKey = guide ? guide.en : null
   useEffect(() => {
     if (!guide) return
@@ -107,15 +125,21 @@ export default function SceneEngine({ room, onExit }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guideKey, stage])
 
-  // ניצחון - הדלת נפתחה
+  // ניצחון - חישוב מדליות והצלת הלוחם
   useEffect(() => {
     if (stage !== 'scene' || wonRef.current || !room.isWon(flags)) return
     wonRef.current = true
     later(() => {
       sfx.win()
       const t = secondsRef.current
+      const prevBest = best[room.id]
+      const medals = ['escaped']
+      if (hintsRef.current === 0) medals.push('sharp')
+      if (mistakesRef.current === 0) medals.push('ear')
+      if (prevBest ? t < prevBest : room.parTime && t <= room.parTime) medals.push('fast')
       setFinalTime(t)
-      finishRoom(room, t)
+      setEarnedMedals(medals)
+      finishRoom(room, t, medals, room.rescue || null)
       setStage('outro')
     }, 1900)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,7 +168,6 @@ export default function SceneEngine({ room, onExit }) {
       }
     }
     if (selected && !h.onItem) {
-      // חפץ לא מתאים כאן - נדנוד עדין, בלי עונש
       sfx.locked()
       api.pulse(h.id)
       return
@@ -160,14 +183,53 @@ export default function SceneEngine({ room, onExit }) {
       setOverlay(it.view)
       return
     }
+    // שילוב שני חפצים מהמלאי (חלקי כרטיס וכו')
+    if (selected && selected !== id) {
+      const combo = it.combineWith?.[selected] || room.items[selected].combineWith?.[id]
+      if (combo) {
+        setInv((v) => [...v.filter((x) => x !== id && x !== selected), combo])
+        setSelected(null)
+        const res = room.items[combo]
+        sfx.pickup()
+        say(res.en)
+        setToast({ ...res, key: Date.now() })
+        later(() => setToast(null), 1900)
+        return
+      }
+    }
     sfx.tap()
     setSelected((s) => (s === id ? null : id))
   }
 
+  // כוחות הלוחמים שניצלו
+  const myHeroes = Object.values(HEROES).filter((h) => rescued.includes(h.id) && h.trappedIn !== room.id)
+  function usePower(hero) {
+    const now = Date.now()
+    if ((powerCd[hero.power.id] || 0) > now) return
+    sfx.star()
+    setPowerCd((c) => ({ ...c, [hero.power.id]: now + POWER_COOLDOWN }))
+    if (hero.power.id === 'reveal') {
+      const focus = room.focus?.(flags, setup)
+      if (!focus) return
+      const idx = room.scenes.findIndex((s) => s.id === focus.scene)
+      if (idx >= 0) setSceneIdx(idx)
+      later(() => {
+        setSparkle({ id: focus.hotspot, key: Date.now() })
+        later(() => setSparkle(null), 3200)
+      }, 350)
+    }
+    if (hero.power.id === 'xray') {
+      setXray(true)
+      later(() => setXray(false), 3200)
+    }
+  }
+
   const prevBest = best[room.id]
-  const overlayCfg = overlay ? room.overlays[overlay] : null
+  const rawOverlayCfg = overlay ? room.overlays[overlay] : null
+  const overlayCfg = typeof rawOverlayCfg === 'function' ? rawOverlayCfg(api) : rawOverlayCfg
   const OverlayComp = overlayCfg ? OVERLAY_COMPS[overlayCfg.type] : null
   const Art = scene.Art
+  const rescueHero = room.rescue ? HEROES[room.rescue] : null
 
   return (
     <div className={`relative min-h-dvh bg-gradient-to-b ${room.bg} pb-8`}>
@@ -212,12 +274,12 @@ export default function SceneEngine({ room, onExit }) {
 
         {stage === 'scene' && (
           <div>
-            <GuideBubble bubble={bubble} />
+            <GuideBubble bubble={bubble} emoji={room.guideEmoji} />
 
             {/* הסצנה - תמונה חיה עם נקודות לחיצה */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/60 border-4 border-amber-950/70 mt-2">
               <svg viewBox="0 0 720 700" className="w-full block select-none">
-                <Art flags={flags} fx={fx} />
+                <Art flags={flags} fx={fx} setup={setup} />
                 {scene.hotspots.map((h) => (
                   <rect
                     key={h.id}
@@ -225,14 +287,30 @@ export default function SceneEngine({ room, onExit }) {
                     y={h.area.y}
                     width={h.area.w}
                     height={h.area.h}
+                    rx="18"
                     fill="transparent"
-                    className="cursor-pointer"
+                    stroke={xray ? '#ffe066' : 'none'}
+                    strokeWidth="5"
+                    strokeDasharray="14 10"
+                    className={`cursor-pointer ${xray ? 'anim-glowfade' : ''}`}
                     onClick={() => tapHotspot(h)}
                   />
                 ))}
+                {/* כוח המצפן - נקודה זוהרת על הצעד הבא */}
+                {sparkle && (() => {
+                  const h = scene.hotspots.find((x) => x.id === sparkle.id)
+                  if (!h) return null
+                  const cx = h.area.x + h.area.w / 2
+                  const cy = h.area.y + h.area.h / 2
+                  return (
+                    <g key={sparkle.key} pointerEvents="none">
+                      <circle cx={cx} cy={cy} r="52" fill="none" stroke="#ffe066" strokeWidth="7" className="anim-glowfade" />
+                      <text x={cx} y={cy - 60} fontSize="40" textAnchor="middle">✨</text>
+                    </g>
+                  )
+                })()}
               </svg>
 
-              {/* חצים לעבור בין המבטים */}
               <button
                 onClick={() => moveScene(1)}
                 className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-black/45 backdrop-blur rounded-full w-11 h-11 text-white text-2xl font-bold active:scale-90 transition-transform"
@@ -248,12 +326,10 @@ export default function SceneEngine({ room, onExit }) {
                 ‹
               </button>
 
-              {/* שם המבט */}
               <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/45 backdrop-blur rounded-full px-4 py-1 text-white/90 font-bold text-sm">
                 {scene.name}
               </div>
 
-              {/* נקודות המבטים */}
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
                 {room.scenes.map((_, i) => (
                   <span key={i} className={`w-2 h-2 rounded-full ${i === sceneIdx ? 'bg-white' : 'bg-white/35'}`} />
@@ -263,38 +339,82 @@ export default function SceneEngine({ room, onExit }) {
               {toast && <ItemToast toast={toast} />}
             </div>
 
+            {/* כוחות הצוות - לוחמים שניצלו בחדרים קודמים */}
+            {myHeroes.length > 0 && (
+              <div className="mt-2 flex gap-2 justify-center">
+                {myHeroes.map((hero) => {
+                  const onCd = (powerCd[hero.power.id] || 0) > Date.now()
+                  return (
+                    <button
+                      key={hero.id}
+                      onClick={() => usePower(hero)}
+                      disabled={onCd}
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 font-bold text-sm transition-all active:scale-95 ${
+                        onCd ? 'bg-white/5 text-white/30 grayscale' : 'bg-indigo-400/20 border border-indigo-300/40 text-white'
+                      }`}
+                      title={hero.power.desc}
+                    >
+                      <Brawler b={hero} className="w-7 h-7" dimmed={onCd} />
+                      {hero.power.icon} {hero.power.name}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
             <Inventory items={room.items} inv={inv} selected={selected} onTap={tapItem} />
 
             <div className="text-center">
-              <HintBox key={guideKey} hints={room.hints(flags)} />
+              <HintBox key={guideKey} hints={room.hints(flags, setup)} onReveal={() => { hintsRef.current += 1 }} />
             </div>
           </div>
         )}
 
         {stage === 'outro' && (
-          <div className="text-center mt-10">
+          <div className="text-center mt-6">
             <Confetti />
-            <div className="text-8xl anim-dooropen inline-block">🚪</div>
-            <h2 className="text-4xl font-bold text-yellow-300 mt-3 animate-bigpop">ברחתם!!! 🎉</h2>
-            <p className="text-white text-xl font-bold mt-2 max-w-md mx-auto">{room.outro}</p>
+            <div className="text-7xl anim-dooropen inline-block">🚪</div>
+            <h2 className="text-4xl font-bold text-yellow-300 mt-2 animate-bigpop">ברחתם!!! 🎉</h2>
+            <p className="text-white text-lg font-bold mt-2 max-w-md mx-auto">{room.outro}</p>
 
-            <div className="mt-5 bg-yellow-400/15 border border-yellow-400/40 rounded-3xl p-5 max-w-sm mx-auto animate-bigpop">
-              <p className="text-yellow-300 text-lg font-bold">🏆 האוצר שלכם:</p>
-              <div className="text-7xl mt-2 animate-floaty">{room.treasure.emoji}</div>
-              <p className="text-white text-2xl font-bold mt-1">{room.treasure.name}</p>
-              <p className="text-white/70 font-bold">{room.treasure.desc}</p>
+            {/* הלוחם שניצל מצטרף לצוות! */}
+            {rescueHero && (
+              <div className="mt-4 bg-indigo-400/15 border border-indigo-300/40 rounded-3xl p-4 max-w-sm mx-auto animate-bigpop">
+                <div className="flex items-center justify-center gap-3">
+                  <Brawler b={rescueHero} className="w-20 h-20 animate-floaty" />
+                  <div className="text-right">
+                    <p className="text-indigo-200 text-xl font-bold">{rescueHero.he} {rescueHero.female ? 'ניצלה' : 'ניצל'}! 🎊</p>
+                    <p className="text-white/80 font-bold text-sm">{rescueHero.female ? 'היא מצטרפת' : 'הוא מצטרף'} לצוות שלכם!</p>
+                    <p className="text-yellow-200 font-bold text-sm mt-1">{rescueHero.power.icon} {rescueHero.power.name}: {rescueHero.power.desc}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* מדליות הריצה הזו */}
+            <div className="mt-3 flex justify-center gap-2">
+              {earnedMedals.map((m) => (
+                <div key={m} className="bg-yellow-400/15 border border-yellow-400/40 rounded-2xl px-3 py-2 animate-bigpop">
+                  <div className="text-3xl">{MEDALS[m].icon}</div>
+                  <div className="text-yellow-200 font-bold text-xs">{MEDALS[m].name}</div>
+                </div>
+              ))}
             </div>
 
-            <div className="mt-4 text-white font-bold text-lg">
+            <div className="mt-3 bg-yellow-400/15 border border-yellow-400/40 rounded-3xl p-4 max-w-sm mx-auto">
+              <p className="text-yellow-300 font-bold">🏆 האוצר: <span className="text-2xl align-middle">{room.treasure.emoji}</span> {room.treasure.name}</p>
+            </div>
+
+            <div className="mt-3 text-white font-bold text-lg">
               ⏱️ הזמן שלכם: <span dir="ltr">{fmt(finalTime)}</span>
               {prevBest && finalTime < prevBest && <span className="text-yellow-300"> - שיא חדש! 🌟</span>}
             </div>
 
             <button
               onClick={() => { sfx.tap(); onExit() }}
-              className="mt-6 bg-gradient-to-br from-indigo-400 to-purple-600 text-white text-2xl font-bold rounded-3xl px-10 py-4 active:scale-95 transition-transform shadow-lg"
+              className="mt-5 bg-gradient-to-br from-indigo-400 to-purple-600 text-white text-2xl font-bold rounded-3xl px-10 py-4 active:scale-95 transition-transform shadow-lg"
             >
-              הביתה 🏠
+              חזרה למפה 🗺️
             </button>
           </div>
         )}

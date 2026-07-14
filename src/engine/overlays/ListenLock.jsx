@@ -27,6 +27,7 @@ export default function ListenLock({ config, api }) {
   function press(opt) {
     if (status === 'done' || status === 'roundwin') return
     if (opt.id === word.id) {
+      api.learnWord?.(word.word || word.id)
       if (round + 1 === config.rounds.length) {
         setStatus('done')
         sfx.unlock()
@@ -43,6 +44,7 @@ export default function ListenLock({ config, api }) {
     } else {
       setStatus('wrong')
       sfx.bad()
+      api.mistake?.()
       later(() => {
         setStatus('idle')
         say(word.en)
@@ -63,16 +65,28 @@ export default function ListenLock({ config, api }) {
         ))}
       </div>
 
-      <button
-        onClick={() => { sfx.tap(); say(word.en) }}
-        className="bg-gradient-to-br from-sky-400 to-blue-600 rounded-full w-20 h-20 text-4xl shadow-lg active:scale-90 transition-transform animate-glowpulse"
-        aria-label="השמע"
-      >
-        🔊
-      </button>
-      <p className="text-white/60 font-bold text-sm mt-2 mb-4">הקשיבו... על מה התוכי מדבר?</p>
+      <div className="flex items-center justify-center gap-3">
+        <button
+          onClick={() => { sfx.tap(); say(word.en) }}
+          className="bg-gradient-to-br from-sky-400 to-blue-600 rounded-full w-20 h-20 text-4xl shadow-lg active:scale-90 transition-transform animate-glowpulse"
+          aria-label="השמע"
+        >
+          🔊
+        </button>
+        {/* כוח האוזן הביונית של רובו - השמעה איטית */}
+        {api.slow && (
+          <button
+            onClick={() => { sfx.tap(); say(word.en, 0.5) }}
+            className="bg-gradient-to-br from-cyan-500 to-teal-700 rounded-full w-14 h-14 text-2xl shadow-lg active:scale-90 transition-transform"
+            aria-label="לאט"
+          >
+            🐢
+          </button>
+        )}
+      </div>
+      <p className="text-white/60 font-bold text-sm mt-2 mb-4">{config.prompt || 'הקשיבו... על מה המדריך מדבר?'}</p>
 
-      <div className={`grid grid-cols-2 gap-3 max-w-xs mx-auto ${status === 'wrong' ? 'animate-shake' : ''}`}>
+      <div className={`grid ${opts.length > 4 ? 'grid-cols-3 max-w-sm' : 'grid-cols-2 max-w-xs'} gap-3 mx-auto ${status === 'wrong' ? 'animate-shake' : ''}`}>
         {opts.map((opt) => (
           <button
             key={opt.id}
