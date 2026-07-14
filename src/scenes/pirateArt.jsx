@@ -250,8 +250,8 @@ export function ParrotScene({ flags, fx }) {
         <path d="M120 142 Q170 118 226 148" stroke="#fff" strokeWidth="7" opacity="0.14" fill="none" />
       </g>
 
-      {/* מפה על הקיר */}
-      <g className={hit(fx, 'map', 'anim-wiggle')} transform="rotate(3 555 155)">
+      {/* מפה על הקיר - באמצע, רחוק מהתוכי כדי שלא תחטוף את הלחיצות עליו */}
+      <g className={hit(fx, 'map', 'anim-wiggle')} transform="translate(-160 0) rotate(3 555 155)">
         <rect x="470" y="92" width="172" height="128" rx="6" fill="#e8d5a8" stroke="#b39257" strokeWidth="4" />
         <path d="M496 190 Q530 150 566 166 Q598 178 616 132" stroke="#8a5a2e" strokeWidth="3.5" strokeDasharray="8 7" fill="none" />
         <line x1="608" y1="124" x2="626" y2="142" stroke="#c0392b" strokeWidth="5" strokeLinecap="round" />

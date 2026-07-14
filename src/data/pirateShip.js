@@ -174,7 +174,7 @@ export default {
         },
         {
           id: 'map',
-          area: { x: 460, y: 85, w: 190, h: 145 },
+          area: { x: 300, y: 85, w: 175, h: 145 },
           onTap(api) {
             api.sayHe('מפה של אי האוצר!')
             api.pulse('map')
