@@ -6,22 +6,36 @@
 ## Tech Stack
 React 19 + Vite 7 + Tailwind 4 (זהה לזירת האנגלית `english-quest`). אין TypeScript, אין ספריות נוספות. אימוג'י בלבד, צלילים מסונתזים (`audio.js`), קריין דפדפן (`speech.js` - אנגלית + עברית).
 
+## שני מנועים
+- **מנוע סצנות (point-and-click)** - `type: 'scene'` - הסגנון של "משחק אמיתי" (השראת Tricky Doors): סצנות SVG מלאות, נקודות לחיצה, מלאי, תוכי מדריך שמדבר רק אנגלית. זה הסגנון לחדרים חדשים.
+- **מנוע חידות ישן** - `components/RoomPlayer.jsx` - רצף חידות (find/code/sequence/riddle). נשמר לתאימות.
+
 ## מבנה
 ```
 src/
-  App.jsx                 ← home ↔ RoomPlayer
+  App.jsx                 ← home ↔ מנוע לפי room.type
   store.jsx               ← localStorage: treasures, best (שיאי זמן), completed
   data/rooms.js           ← רישום החדרים (comingSoon לחדרים עתידיים)
-  data/pirateShip.js      ← חדר 1 - הפורמט לכל חדר חדש
-  components/RoomPlayer.jsx  ← המנוע: intro → puzzles+bridges → outro
-  components/HintBox.jsx     ← רמזים הדרגתיים (עד 3)
-  puzzles/                ← 5 סוגי חידות: find, code, sequence, word, riddle
+  data/pirateShip.js      ← חדר 1 (מנוע סצנות) - הפורמט לכל חדר חדש
+  engine/SceneEngine.jsx  ← מנוע הסצנות: intro → סצנות+מלאי+תוכי → outro
+  engine/                 ← Inventory, GuideBubble, ItemToast, OverlayShell
+  engine/overlays/        ← מיני-חידות: simon, code (גלגל קוד), listen (מנעול הקשבה), note
+  scenes/pirateArt.jsx    ← האמנות: 3 מבטים ב-SVG (המחסן, פינת התוכי, הדלת)
+  components/RoomPlayer.jsx  ← המנוע הישן
+  puzzles/                ← חידות המנוע הישן + SequencePuzzle (משמש גם את simon)
 ```
 
-## להוסיף חדר חדש
-1. קובץ חדש ב-`data/` לפי הפורמט של `pirateShip.js` (intro, puzzles, treasure, outro)
-2. import + הוספה ל-`ROOMS` ב-`data/rooms.js` (להחליף את ה-comingSoon)
-3. זהו. אין קוד.
+## להוסיף חדר חדש (מנוע סצנות)
+1. קובץ אמנות ב-`scenes/` - קומפוננטות SVG שמקבלות `flags` (מצב) ו-`fx` (אנימציה רגעית, helper בשם `hit`)
+2. קובץ נתונים ב-`data/` לפי הפורמט של `pirateShip.js`: `scenes` (עם hotspots שמקבלים `api`), `items`, `overlays`, `guide(flags)`, `hints(flags)`, `isWon(flags)`
+3. import + הוספה ל-`ROOMS` ב-`data/rooms.js` (להחליף את ה-comingSoon)
+4. ה-API של hotspot: `has/set` (דגלים), `addItem/removeItem`, `say` (אנגלית) / `sayHe`, `parrot(en,he)`, `repeat`, `pulse(id)`, `openOverlay`, `sfx`, `later`
+
+## עקרון האנגלית - הכל באוזניים, כלום בעיניים
+אריאל עוד לא קורא אנגלית. המדריך מדבר רק אנגלית (בקול!) עם כיתוב עברי קטן, כל חפץ שנאסף נאמר באנגלית, מנעול הקשבה = שומעים מילה ובוחרים ציור. **אין אותיות ואין איות.** מילים מאוצר המילים של זירת האנגלית (`english-quest`).
+
+## זהירות בחידות ספירה
+אם חידה מבקשת לספור חפצים בסצנות - לוודא שהמספר בציור מדויק ושאין עותקים מבלבלים (אייקונים על מנעולים = חריטה בצבע זהב אחיד, לא צבעי אמת).
 
 ## עקרונות עיצוב (גיל 7)
 - בלי טיימר מעניש - סטופר רק לשבירת שיאים

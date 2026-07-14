@@ -7,14 +7,12 @@ import Confetti from './Confetti.jsx'
 import FindPuzzle from '../puzzles/FindPuzzle.jsx'
 import CodePuzzle from '../puzzles/CodePuzzle.jsx'
 import SequencePuzzle from '../puzzles/SequencePuzzle.jsx'
-import WordPuzzle from '../puzzles/WordPuzzle.jsx'
 import RiddlePuzzle from '../puzzles/RiddlePuzzle.jsx'
 
 const PUZZLE_COMPS = {
   find: FindPuzzle,
   code: CodePuzzle,
   sequence: SequencePuzzle,
-  word: WordPuzzle,
   riddle: RiddlePuzzle,
 }
 

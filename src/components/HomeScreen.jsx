@@ -45,7 +45,7 @@ export default function HomeScreen({ onPlay }) {
                 <div className="flex-1 text-right">
                   <div className="text-white text-2xl font-bold">{room.title}</div>
                   <div className="text-white/80 font-bold text-sm">
-                    {room.puzzles.length} חידות
+                    {room.type === 'scene' ? 'הרפתקת חקירה 🔍' : `${room.puzzles.length} חידות`}
                     {done ? ` · ברחתם ${done} ${done === 1 ? 'פעם' : 'פעמים'} ✅` : ' · עוד לא ברחתם!'}
                   </div>
                   {best[room.id] && (

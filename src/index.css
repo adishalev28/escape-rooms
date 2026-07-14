@@ -74,6 +74,67 @@ html, body {
 }
 .anim-padflash { animation: padflash 0.45s ease both; }
 
+/* === אנימציות סצנה (מנוע point-and-click) === */
+/* אלמנטים בתוך SVG - כדי ש-transform יעבוד סביב מרכז האלמנט */
+.tb { transform-box: fill-box; transform-origin: center; }
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  45% { opacity: 0.72; }
+  60% { opacity: 0.92; }
+  75% { opacity: 0.8; }
+}
+.anim-flicker { animation: flicker 2.6s ease-in-out infinite; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(-3deg); }
+}
+.anim-bob { animation: bob 2.2s ease-in-out infinite; }
+
+@keyframes swim {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(16px); }
+}
+.anim-swim { animation: swim 3.2s ease-in-out infinite; }
+.anim-swim-b { animation: swim 4.1s ease-in-out 0.9s infinite reverse; }
+.anim-swim-c { animation: swim 3.6s ease-in-out 1.7s infinite; }
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-7deg); }
+  50% { transform: rotate(6deg); }
+  75% { transform: rotate(-4deg); }
+}
+.anim-wiggle { animation: wiggle 0.55s ease both; }
+
+@keyframes ratrun {
+  0% { transform: translateX(0); }
+  45% { transform: translateX(75px) scaleX(1); }
+  55% { transform: translateX(75px) scaleX(-1); }
+  100% { transform: translateX(0) scaleX(-1); }
+}
+.anim-ratrun { animation: ratrun 1s ease-in-out both; }
+
+@keyframes tentacle {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-14deg); }
+  65% { transform: rotate(10deg); }
+}
+.anim-tentacle { animation: tentacle 0.9s ease both; transform-origin: bottom center; }
+
+@keyframes glowfade {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.8; }
+}
+.anim-glowfade { animation: glowfade 1.6s ease-in-out infinite; }
+
+@keyframes risepop {
+  0% { transform: translateY(14px) scale(0.6); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.anim-risepop { animation: risepop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
 /* דלת שנפתחת בסוף */
 @keyframes dooropen {
   0% { transform: perspective(600px) rotateY(0deg); }
