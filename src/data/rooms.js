@@ -3,11 +3,13 @@
 import pirateShip from './pirateShip.js'
 import spaceStation from './spaceStation.js'
 import wizardTower from './wizardTower.js'
+import dragonCave from './dragonCave.js'
 
 export const ROOMS = [
   pirateShip,
   spaceStation,
   wizardTower,
+  dragonCave,
   // התחנה הבאה במסע - מוצגת נעולה
-  { id: 'dragon-cave', title: 'מערת הדרקון', emoji: '🐉', comingSoon: true },
+  { id: 'ghost-castle', title: 'טירת הרוחות', emoji: '🏰', comingSoon: true },
 ]

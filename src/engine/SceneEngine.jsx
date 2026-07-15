@@ -48,6 +48,8 @@ export default function SceneEngine({ room, onExit }) {
   const [powerCd, setPowerCd] = useState({})   // powerId -> timestamp שבו נגמר הקירור
   const [setup] = useState(() => (room.setup ? room.setup() : null)) // אקראיות למשחק חוזר
   const [earnedMedals, setEarnedMedals] = useState([])
+  const [frozenUntil, setFrozenUntil] = useState(0) // כוח הקפאת הזמן של בולט
+  const frozenRef = useRef(0)
   const secondsRef = useRef(0)
   const hintsRef = useRef(0)
   const mistakesRef = useRef(0)
@@ -63,6 +65,7 @@ export default function SceneEngine({ room, onExit }) {
   useEffect(() => {
     if (stage !== 'scene') return
     const iv = setInterval(() => {
+      if (Date.now() < frozenRef.current) return // הזמן קפוא!
       setSeconds((s) => {
         secondsRef.current = s + 1
         return s + 1
@@ -207,7 +210,12 @@ export default function SceneEngine({ room, onExit }) {
     const now = Date.now()
     if ((powerCd[hero.power.id] || 0) > now) return
     sfx.star()
-    setPowerCd((c) => ({ ...c, [hero.power.id]: now + POWER_COOLDOWN }))
+    // הקפאה נמשכת דקה - קירור ארוך יותר שלא יהיה זמן קפוא תמידי
+    setPowerCd((c) => ({ ...c, [hero.power.id]: now + (hero.power.id === 'freeze' ? 150000 : POWER_COOLDOWN) }))
+    if (hero.power.id === 'freeze') {
+      frozenRef.current = now + 60000
+      setFrozenUntil(now + 60000)
+    }
     if (hero.power.id === 'reveal') {
       const focus = room.focus?.(flags, setup)
       if (!focus) return
@@ -243,8 +251,8 @@ export default function SceneEngine({ room, onExit }) {
             🏠 יציאה
           </button>
           <h1 className="text-lg sm:text-2xl font-bold text-white drop-shadow">{room.emoji} {room.title}</h1>
-          <div className="bg-white/15 backdrop-blur rounded-full px-4 py-2 text-white/90 font-bold min-w-20 text-center" dir="ltr">
-            ⏱️ {fmt(seconds)}
+          <div className={`backdrop-blur rounded-full px-4 py-2 font-bold min-w-20 text-center ${Date.now() < frozenUntil ? 'bg-cyan-400/30 text-cyan-100' : 'bg-white/15 text-white/90'}`} dir="ltr">
+            {Date.now() < frozenUntil ? '❄️' : '⏱️'} {fmt(seconds)}
           </div>
         </header>
 

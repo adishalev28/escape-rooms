@@ -19,6 +19,11 @@ export const HEROES = {
     power: { id: 'xray', icon: '🌙', name: 'זוהר הירח', desc: 'מאיר את כל המקומות שאפשר ללחוץ עליהם' },
     trappedIn: 'wizard-tower',
   },
+  bolt: {
+    ...BRAWLERS.find((b) => b.id === 'bolt'),
+    power: { id: 'freeze', icon: '❄️', name: 'הקפאת זמן', desc: 'מקפיא את השעון לדקה שלמה - לציידי שיאים!' },
+    trappedIn: 'dragon-cave',
+  },
 }
 
 export const heroList = Object.values(HEROES)

@@ -14,7 +14,7 @@ export default function Inventory({ items, inv, selected, onTap }) {
             <button
               key={id}
               onClick={() => onTap(id)}
-              className={`w-14 h-14 rounded-2xl text-3xl flex items-center justify-center transition-all active:scale-90 animate-pop ${
+              className={`w-14 h-14 rounded-2xl ${it.emoji.length > 3 ? 'text-lg' : 'text-3xl'} flex items-center justify-center transition-all active:scale-90 animate-pop ${
                 sel
                   ? 'bg-yellow-400/30 ring-4 ring-yellow-300 animate-glowpulse'
                   : 'bg-white/10 border border-white/20'
