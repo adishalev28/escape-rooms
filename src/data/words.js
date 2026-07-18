@@ -7,6 +7,7 @@ export const WORD_PACKS = [
   { id: 'dragon', name: 'יצורי המערה', emoji: '🐉' },
   { id: 'ghost', name: 'מספרים גדולים וספרים', emoji: '🏰' },
   { id: 'candy', name: 'צבעים ומתוקים', emoji: '🍭' },
+  { id: 'jungle', name: 'חיות הג\'ונגל', emoji: '🐒' },
 ]
 
 export const WORDS = [
@@ -66,6 +67,13 @@ export const WORDS = [
   { id: 'icecream', en: 'Ice cream', he: 'גלידה', emoji: '🍦', pack: 'candy' },
   { id: 'pizza', en: 'Pizza', he: 'פיצה', emoji: '🍕', pack: 'candy' },
   { id: 'cookie', en: 'Cookie', he: 'עוגייה', emoji: '🍪', pack: 'candy' },
+  // מקדש הג'ונגל
+  { id: 'monkey', en: 'Monkey', he: 'קוף', emoji: '🐵', pack: 'jungle' },
+  { id: 'lion', en: 'Lion', he: 'אריה', emoji: '🦁', pack: 'jungle' },
+  { id: 'elephant', en: 'Elephant', he: 'פיל', emoji: '🐘', pack: 'jungle' },
+  { id: 'cow', en: 'Cow', he: 'פרה', emoji: '🐮', pack: 'jungle' },
+  { id: 'tree', en: 'Tree', he: 'עץ', emoji: '🌳', pack: 'jungle' },
+  { id: 'sun', en: 'Sun', he: 'שמש', emoji: '☀️', pack: 'jungle' },
 ]
 
 export const wordById = (id) => WORDS.find((w) => w.id === id)

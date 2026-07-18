@@ -35,6 +35,11 @@ export const HEROES = {
     power: { id: 'pardon', icon: '👑', name: 'חנינה מלכותית', desc: 'טעות ההקשבה הראשונה נסלחת - מדליית "אוזן מושלמת" נשארת! (אוטומטי)', passive: true },
     trappedIn: 'candy-kingdom',
   },
+  rocky: {
+    ...BRAWLERS.find((b) => b.id === 'rocky'),
+    power: { id: 'stonehint', icon: '🪨', name: 'חוכמת האבן', desc: 'הרמז הראשון בכל חדר חינם - מדליית "בלי רמזים" נשארת! (אוטומטי)', passive: true },
+    trappedIn: 'jungle-temple',
+  },
 }
 
 export const heroList = Object.values(HEROES)

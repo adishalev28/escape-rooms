@@ -137,7 +137,9 @@ export default function SceneEngine({ room, onExit }) {
       const t = secondsRef.current
       const prevBest = best[room.id]
       const medals = ['escaped']
-      if (hintsRef.current === 0) medals.push('sharp')
+      // חוכמת האבן של רוקי: הרמז הראשון חינם
+      const freeHints = rescued.includes('rocky') && room.rescue !== 'rocky' ? 1 : 0
+      if (hintsRef.current <= freeHints) medals.push('sharp')
       // חנינה מלכותית של קינג: טעות הקשבה ראשונה נסלחת
       const forgiven = rescued.includes('king') && room.rescue !== 'king' ? 1 : 0
       if (mistakesRef.current <= forgiven) medals.push('ear')
