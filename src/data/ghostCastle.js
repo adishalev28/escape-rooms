@@ -234,9 +234,14 @@ export default {
             } else if (!api.has('mirrorClean')) {
               api.sayHe('המראה מאובקת לגמרי... צריך לנקות אותה!')
               api.pulse('mirror')
-            } else {
-              api.sfx.tap()
+            } else if (!api.has('shadowFreed')) {
+              api.sayHe('שאדו כלוא בפנים! בחרו את הטבעת במלאי ולחצו על המראה')
               api.pulse('mirror')
+            } else if (!api.has('doorOpen')) {
+              // הילד לוחץ על המראה כדי לברוח? הגיוני! שאדו מפוצץ את הדלת מבפנים
+              api.set('doorOpen')
+              api.sfx.unlock()
+              api.later(() => api.sfx.creak(), 400)
             }
           },
           onItem(item, api) {

@@ -380,6 +380,13 @@ export function MirrorScene({ flags, fx }) {
             <rect x="560" y="430" width="130" height="240" rx="10" fill="url(#gmWood)" stroke="#241505" strokeWidth="5" />
             <circle cx="585" cy="550" r="9" fill="#c9a04e" stroke="#8d6b34" strokeWidth="3" />
             <line x1="603" y1="436" x2="603" y2="666" stroke="#241505" strokeWidth="3" opacity="0.5" />
+            {/* אחרי ששאדו חופשי - הדלת זוהרת וקוראת ללחוץ */}
+            {flags.shadowFreed && (
+              <g>
+                <rect x="554" y="424" width="142" height="252" rx="14" fill="none" stroke="#ffe066" strokeWidth="7" className="anim-glowfade" />
+                <text x="625" y="415" fontSize="30" textAnchor="middle" className="animate-floaty">⬇️</text>
+              </g>
+            )}
           </g>
         )}
         {flags.doorOpen && (
