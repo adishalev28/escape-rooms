@@ -138,7 +138,9 @@ export default function SceneEngine({ room, onExit }) {
       const prevBest = best[room.id]
       const medals = ['escaped']
       if (hintsRef.current === 0) medals.push('sharp')
-      if (mistakesRef.current === 0) medals.push('ear')
+      // חנינה מלכותית של קינג: טעות הקשבה ראשונה נסלחת
+      const forgiven = rescued.includes('king') && room.rescue !== 'king' ? 1 : 0
+      if (mistakesRef.current <= forgiven) medals.push('ear')
       if (prevBest ? t < prevBest : room.parTime && t <= room.parTime) medals.push('fast')
       setFinalTime(t)
       setEarnedMedals(medals)
@@ -229,6 +231,11 @@ export default function SceneEngine({ room, onExit }) {
     if (hero.power.id === 'xray') {
       setXray(true)
       later(() => setXray(false), 3200)
+    }
+    // לחישת הצל - הרמז הראשון בקול, בלי לפגוע במדליית "בלי רמזים"
+    if (hero.power.id === 'whisper') {
+      const hs = room.hints(flags, setup)
+      if (hs?.length) sayHe(hs[0])
     }
   }
 
@@ -352,6 +359,20 @@ export default function SceneEngine({ room, onExit }) {
               <div className="mt-2 flex gap-2 justify-center">
                 {myHeroes.map((hero) => {
                   const onCd = (powerCd[hero.power.id] || 0) > Date.now()
+                  if (hero.power.passive) {
+                    // כוח פסיבי - תג בלבד, לחיצה מסבירה
+                    return (
+                      <button
+                        key={hero.id}
+                        onClick={() => { sfx.star(); sayHe(hero.power.desc) }}
+                        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 font-bold text-sm bg-yellow-400/15 border border-yellow-300/40 text-yellow-100 active:scale-95 transition-transform"
+                        title={hero.power.desc}
+                      >
+                        <Brawler b={hero} className="w-7 h-7" />
+                        {hero.power.icon} {hero.power.name}
+                      </button>
+                    )
+                  }
                   return (
                     <button
                       key={hero.id}

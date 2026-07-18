@@ -5,6 +5,8 @@ export const WORD_PACKS = [
   { id: 'space', name: 'מספרים וצבעים', emoji: '🚀' },
   { id: 'wizard', name: 'חיות ומטעמים', emoji: '🧙' },
   { id: 'dragon', name: 'יצורי המערה', emoji: '🐉' },
+  { id: 'ghost', name: 'מספרים גדולים וספרים', emoji: '🏰' },
+  { id: 'candy', name: 'צבעים ומתוקים', emoji: '🍭' },
 ]
 
 export const WORDS = [
@@ -47,6 +49,23 @@ export const WORDS = [
   { id: 'frog', en: 'Frog', he: 'צפרדע', emoji: '🐸', pack: 'dragon' },
   { id: 'snake', en: 'Snake', he: 'נחש', emoji: '🐍', pack: 'dragon' },
   { id: 'bear', en: 'Bear', he: 'דוב', emoji: '🐻', pack: 'dragon' },
+  // טירת הרוחות
+  { id: 'six', en: 'Six', he: 'שש', emoji: '6️⃣', pack: 'ghost' },
+  { id: 'seven', en: 'Seven', he: 'שבע', emoji: '7️⃣', pack: 'ghost' },
+  { id: 'eight', en: 'Eight', he: 'שמונה', emoji: '8️⃣', pack: 'ghost' },
+  { id: 'nine', en: 'Nine', he: 'תשע', emoji: '9️⃣', pack: 'ghost' },
+  { id: 'book', en: 'Book', he: 'ספר', emoji: '📖', pack: 'ghost' },
+  { id: 'purple', en: 'Purple', he: 'סגול', emoji: '🟣', pack: 'ghost' },
+  { id: 'white', en: 'White', he: 'לבן', emoji: '⚪', pack: 'ghost' },
+  { id: 'black', en: 'Black', he: 'שחור', emoji: '⚫', pack: 'ghost' },
+  { id: 'brown', en: 'Brown', he: 'חום', emoji: '🟤', pack: 'ghost' },
+  // ממלכת הממתקים
+  { id: 'orange', en: 'Orange', he: 'כתום', emoji: '🟠', pack: 'candy' },
+  { id: 'pink', en: 'Pink', he: 'ורוד', emoji: '🩷', pack: 'candy' },
+  { id: 'cake', en: 'Cake', he: 'עוגה', emoji: '🎂', pack: 'candy' },
+  { id: 'icecream', en: 'Ice cream', he: 'גלידה', emoji: '🍦', pack: 'candy' },
+  { id: 'pizza', en: 'Pizza', he: 'פיצה', emoji: '🍕', pack: 'candy' },
+  { id: 'cookie', en: 'Cookie', he: 'עוגייה', emoji: '🍪', pack: 'candy' },
 ]
 
 export const wordById = (id) => WORDS.find((w) => w.id === id)

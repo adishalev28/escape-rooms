@@ -24,6 +24,17 @@ export const HEROES = {
     power: { id: 'freeze', icon: '❄️', name: 'הקפאת זמן', desc: 'מקפיא את השעון לדקה שלמה - לציידי שיאים!' },
     trappedIn: 'dragon-cave',
   },
+  shadow: {
+    ...BRAWLERS.find((b) => b.id === 'shadow'),
+    power: { id: 'whisper', icon: '🌑', name: 'לחישת הצל', desc: 'לוחש רמז בקול - בלי לשרוף את מדליית "בלי רמזים"!' },
+    trappedIn: 'ghost-castle',
+  },
+  king: {
+    ...BRAWLERS.find((b) => b.id === 'king'),
+    female: false,
+    power: { id: 'pardon', icon: '👑', name: 'חנינה מלכותית', desc: 'טעות ההקשבה הראשונה נסלחת - מדליית "אוזן מושלמת" נשארת! (אוטומטי)', passive: true },
+    trappedIn: 'candy-kingdom',
+  },
 }
 
 export const heroList = Object.values(HEROES)
