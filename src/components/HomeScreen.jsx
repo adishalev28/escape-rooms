@@ -131,6 +131,8 @@ export default function HomeScreen({ onPlay, onAlbum }) {
         <p className="text-center text-white/50 font-bold text-sm mt-8">
           💡 הכי כיף לברוח ביחד - שחקו עם אמא או אבא!
         </p>
+        {/* מספר גרסה - כדי לדעת בשנייה אם הדפדפן מציג גרסה ישנה */}
+        <p className="text-center text-white/25 font-bold text-xs mt-2" dir="ltr">v8</p>
       </div>
     </div>
   )
