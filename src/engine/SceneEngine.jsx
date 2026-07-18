@@ -165,17 +165,19 @@ export default function SceneEngine({ room, onExit }) {
   }
 
   function tapHotspot(h) {
-    if (selected && h.onItem) {
-      const used = h.onItem(selected, api)
-      if (used) {
+    if (selected) {
+      if (h.onItem) {
+        const used = h.onItem(selected, api)
         setSelected(null)
+        if (used) return
+        // חפץ לא מתאים - נדנוד עדין, והלחיצה הבאה תעבוד רגיל
+        sfx.locked()
+        api.pulse(h.id)
         return
       }
-    }
-    if (selected && !h.onItem) {
-      sfx.locked()
-      api.pulse(h.id)
-      return
+      // אין כאן שימוש בחפצים - מבטלים את הבחירה וממשיכים ללחיצה רגילה,
+      // כדי שדלת/חידה לא "ייתקעו" רק כי חפץ נשאר מסומן במלאי
+      setSelected(null)
     }
     if (h.onTap) h.onTap(api)
     else sfx.tap()
