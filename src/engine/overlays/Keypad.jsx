@@ -18,8 +18,10 @@ export default function Keypad({ config, api }) {
   }
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
+  // מרווח גדול בין מספר למספר - כל say מבטל את הקודם, ובקולות איטיים
+  // מרווח צפוף גורם לחצאי מילים ("Se--Ni--Se")
   function speakCode() {
-    code.forEach((d, i) => later(() => say(DIGIT_WORDS[d]), 400 + i * 1100))
+    code.forEach((d, i) => later(() => say(DIGIT_WORDS[d], 0.75), 400 + i * 1800))
   }
 
   // המדריך אומר את הקוד כשנפתח החלון
@@ -29,9 +31,9 @@ export default function Keypad({ config, api }) {
   }, [])
 
   function press(d) {
-    if (status === 'done') return
+    // בלי הקראת הספרה שנלחצה - ילדים מבינים את ההד כהוראה הבאה ומתבלבלים
+    if (status === 'done' || status === 'wrong') return
     sfx.tap()
-    say(DIGIT_WORDS[d])
     const next = [...entered, d]
     if (code[next.length - 1] !== d) {
       setStatus('wrong')
@@ -41,7 +43,7 @@ export default function Keypad({ config, api }) {
       later(() => {
         setStatus('idle')
         speakCode()
-      }, 1000)
+      }, 1300)
       return
     }
     setEntered(next)
