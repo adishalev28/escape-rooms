@@ -224,7 +224,7 @@ export default {
         },
         {
           id: 'airlockDoor',
-          area: { x: 340, y: 240, w: 330, h: 330 },
+          area: { x: 340, y: 240, w: 330, h: 295 },
           onTap(api) {
             api.sfx.thud()
             api.pulse('airlockDoor')

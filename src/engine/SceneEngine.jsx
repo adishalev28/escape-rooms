@@ -299,7 +299,7 @@ export default function SceneEngine({ room, onExit }) {
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/60 border-4 border-amber-950/70 mt-2">
               <svg viewBox="0 0 720 700" className="w-full block select-none">
                 <Art flags={flags} fx={fx} setup={setup} />
-                {scene.hotspots.map((h) => (
+                {scene.hotspots.map((h) => h.active && !h.active(api) ? null : (
                   <rect
                     key={h.id}
                     x={h.area.x}

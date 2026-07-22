@@ -61,7 +61,7 @@ export default {
         },
         {
           id: 'fireplace',
-          area: { x: 480, y: 450, w: 165, h: 215 },
+          area: { x: 480, y: 450, w: 115, h: 215 },
           onTap(api) {
             if (api.has('coinOut') && !api.has('gotCoin')) {
               api.set('gotCoin')

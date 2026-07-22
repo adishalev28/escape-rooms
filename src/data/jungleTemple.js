@@ -188,7 +188,7 @@ export default {
         },
         {
           id: 'flowers',
-          area: { x: 60, y: 580, w: 620, h: 100 },
+          area: { x: 240, y: 580, w: 440, h: 100 },
           onTap(api) {
             api.sfx.star()
             api.pulse('flowers')

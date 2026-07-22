@@ -179,28 +179,6 @@ export default {
       Art: DungeonScene,
       hotspots: [
         {
-          id: 'guard',
-          area: { x: 460, y: 480, w: 200, h: 200 },
-          onTap(api) {
-            if (!api.has('guardMoved')) {
-              api.sfx.thud()
-              api.parrot('I want something SWEET and BIG!', 'השומר רוצה משהו מתוק וגדול במיוחד...')
-              api.pulse('guard')
-            } else api.sfx.blub()
-          },
-          onItem(item, api) {
-            if (item === 'rainbow' && !api.has('guardMoved')) {
-              api.set('guardMoved')
-              api.removeItem('rainbow')
-              api.sfx.good()
-              api.sayHe('הדובון חוטף את סוכריית הקשת וזז הצידה בריקוד!')
-              api.pulse('guard')
-              return true
-            }
-            return false
-          },
-        },
-        {
           id: 'cage',
           area: { x: 60, y: 240, w: 240, h: 240 },
           onTap(api) {
@@ -249,6 +227,29 @@ export default {
             } else {
               api.openOverlay('vaultCode')
             }
+          },
+        },
+        // השומר אחרון ברשימה = מעל דלת השוקולד, אחרת הדלת בולעת את הלחיצות עליו.
+        // אחרי שהוא זז - נקודת הלחיצה נעלמת והדלת חופשייה.
+        {
+          id: 'guard',
+          area: { x: 470, y: 430, w: 175, h: 240 },
+          active: (api) => !api.has('guardMoved'),
+          onTap(api) {
+            api.sfx.thud()
+            api.parrot('I want something SWEET and BIG!', 'השומר רוצה משהו מתוק וגדול במיוחד...')
+            api.pulse('guard')
+          },
+          onItem(item, api) {
+            if (item === 'rainbow' && !api.has('guardMoved')) {
+              api.set('guardMoved')
+              api.removeItem('rainbow')
+              api.sfx.good()
+              api.sayHe('הדובון חוטף את סוכריית הקשת וזז הצידה בריקוד!')
+              api.pulse('guard')
+              return true
+            }
+            return false
           },
         },
       ],

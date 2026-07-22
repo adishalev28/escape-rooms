@@ -235,7 +235,7 @@ export default {
         },
         {
           id: 'dragon',
-          area: { x: 260, y: 330, w: 370, h: 175 },
+          area: { x: 260, y: 330, w: 280, h: 175 },
           onTap(api) {
             api.sfx.creak()
             api.sayHe('שששש... הדרקון ישן! לא להעיר!')
