@@ -40,6 +40,16 @@ export const HEROES = {
     power: { id: 'stonehint', icon: '🪨', name: 'חוכמת האבן', desc: 'הרמז הראשון בכל חדר חינם - מדליית "בלי רמזים" נשארת! (אוטומטי)', passive: true },
     trappedIn: 'jungle-temple',
   },
+  ninja: {
+    ...BRAWLERS.find((b) => b.id === 'ninja'),
+    power: { id: 'shuriken', icon: '✴️', name: 'כוכב הנינג\'ה', desc: 'מעלים 2 תשובות שגויות במנעולי הקשבה - פעם אחת בכל מנעול' },
+    trappedIn: 'undersea-city',
+  },
+  blaze: {
+    ...BRAWLERS.find((b) => b.id === 'blaze'),
+    power: { id: 'heat', icon: '🔥', name: 'חום האש', desc: 'השעון קפוא בזמן מיני-חידות - פותרים בנחת בלי לאבד שיאים! (אוטומטי)', passive: true },
+    trappedIn: 'volcano',
+  },
 }
 
 export const heroList = Object.values(HEROES)

@@ -7,6 +7,8 @@ import dragonCave from './dragonCave.js'
 import ghostCastle from './ghostCastle.js'
 import candyKingdom from './candyKingdom.js'
 import jungleTemple from './jungleTemple.js'
+import underseaCity from './underseaCity.js'
+import volcano from './volcano.js'
 
 export const ROOMS = [
   pirateShip,
@@ -16,6 +18,8 @@ export const ROOMS = [
   ghostCastle,
   candyKingdom,
   jungleTemple,
-  // התחנה הבאה במסע - מוצגת נעולה
-  { id: 'undersea-city', title: 'העיר שמתחת לים', emoji: '🌊', comingSoon: true },
+  underseaCity,
+  volcano,
+  // התחנה האחרונה במסע - מוצגת נעולה
+  { id: 'thorn-island', title: 'אי הקוצים', emoji: '🌵', comingSoon: true },
 ]

@@ -9,6 +9,8 @@ export default function ListenLock({ config, api }) {
   const [round, setRound] = useState(0)
   const [opts, setOpts] = useState(() => shuffle(config.options))
   const [status, setStatus] = useState('idle') // idle | wrong | roundwin | done
+  const [hidden, setHidden] = useState([]) // כוכב הנינג'ה - תשובות שהועלמו
+  const [starUsed, setStarUsed] = useState(false)
   const timers = useRef([])
 
   function later(fn, ms) {
@@ -37,6 +39,7 @@ export default function ListenLock({ config, api }) {
         sfx.good()
         later(() => {
           setOpts(shuffle(config.options))
+          setHidden([])
           setStatus('idle')
           setRound((r) => r + 1)
         }, 1100)
@@ -83,11 +86,26 @@ export default function ListenLock({ config, api }) {
             🐢
           </button>
         )}
+        {/* כוכב הנינג'ה - מעלים 2 תשובות שגויות, פעם אחת במנעול */}
+        {api.ninja && !starUsed && (
+          <button
+            onClick={() => {
+              sfx.star()
+              setStarUsed(true)
+              const wrong = shuffle(opts.filter((o) => o.id !== word.id)).slice(0, 2).map((o) => o.id)
+              setHidden(wrong)
+            }}
+            className="bg-gradient-to-br from-slate-600 to-slate-900 rounded-full w-14 h-14 text-2xl shadow-lg active:scale-90 transition-transform"
+            aria-label="כוכב נינג'ה"
+          >
+            ✴️
+          </button>
+        )}
       </div>
       <p className="text-white/60 font-bold text-sm mt-2 mb-4">{config.prompt || 'הקשיבו... על מה המדריך מדבר?'}</p>
 
       <div className={`grid ${opts.length > 4 ? 'grid-cols-3 max-w-sm' : 'grid-cols-2 max-w-xs'} gap-3 mx-auto ${status === 'wrong' ? 'animate-shake' : ''}`}>
-        {opts.map((opt) => (
+        {opts.filter((o) => !hidden.includes(o.id)).map((opt) => (
           <button
             key={opt.id}
             onClick={() => press(opt)}

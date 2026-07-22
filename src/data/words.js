@@ -8,6 +8,8 @@ export const WORD_PACKS = [
   { id: 'ghost', name: 'מספרים גדולים וספרים', emoji: '🏰' },
   { id: 'candy', name: 'צבעים ומתוקים', emoji: '🍭' },
   { id: 'jungle', name: 'חיות הג\'ונגל', emoji: '🐒' },
+  { id: 'sea', name: 'העולם שמתחת למים', emoji: '🌊' },
+  { id: 'volcano', name: 'מילים של גיימרים', emoji: '🌋' },
 ]
 
 export const WORDS = [
@@ -74,6 +76,20 @@ export const WORDS = [
   { id: 'cow', en: 'Cow', he: 'פרה', emoji: '🐮', pack: 'jungle' },
   { id: 'tree', en: 'Tree', he: 'עץ', emoji: '🌳', pack: 'jungle' },
   { id: 'sun', en: 'Sun', he: 'שמש', emoji: '☀️', pack: 'jungle' },
+  // העיר שמתחת לים
+  { id: 'water', en: 'Water', he: 'מים', emoji: '💧', pack: 'sea' },
+  { id: 'swim', en: 'Swim', he: 'לשחות', emoji: '🏊', pack: 'sea' },
+  { id: 'house', en: 'House', he: 'בית', emoji: '🏠', pack: 'sea' },
+  { id: 'car', en: 'Car', he: 'מכונית', emoji: '🚗', pack: 'sea' },
+  { id: 'heart', en: 'Heart', he: 'לב', emoji: '❤️', pack: 'sea' },
+  { id: 'flower', en: 'Flower', he: 'פרח', emoji: '🌸', pack: 'sea' },
+  // הר הגעש - מילים של גיימרים!
+  { id: 'power', en: 'Power', he: 'כוח', emoji: '⚡', pack: 'volcano' },
+  { id: 'shield', en: 'Shield', he: 'מגן', emoji: '🛡️', pack: 'volcano' },
+  { id: 'map', en: 'Map', he: 'מפה', emoji: '🗺️', pack: 'volcano' },
+  { id: 'trophy', en: 'Trophy', he: 'גביע', emoji: '🏆', pack: 'volcano' },
+  { id: 'win', en: 'Win', he: 'ניצחון', emoji: '🥇', pack: 'volcano' },
+  { id: 'gem', en: 'Gem', he: 'יהלום', emoji: '💎', pack: 'volcano' },
 ]
 
 export const wordById = (id) => WORDS.find((w) => w.id === id)

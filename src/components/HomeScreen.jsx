@@ -132,7 +132,7 @@ export default function HomeScreen({ onPlay, onAlbum }) {
           💡 הכי כיף לברוח ביחד - שחקו עם אמא או אבא!
         </p>
         {/* מספר גרסה - כדי לדעת בשנייה אם הדפדפן מציג גרסה ישנה */}
-        <p className="text-center text-white/25 font-bold text-xs mt-2" dir="ltr">v11</p>
+        <p className="text-center text-white/25 font-bold text-xs mt-2" dir="ltr">v12</p>
       </div>
     </div>
   )

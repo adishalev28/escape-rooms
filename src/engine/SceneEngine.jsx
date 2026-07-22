@@ -55,6 +55,10 @@ export default function SceneEngine({ room, onExit }) {
   const mistakesRef = useRef(0)
   const wonRef = useRef(false)
   const timers = useRef([])
+  // חום האש של בלייז: השעון קפוא כשחלון מיני-חידה פתוח
+  const overlayRef = useRef(null)
+  overlayRef.current = overlay
+  const blazeHeat = rescued.includes('blaze') && room.rescue !== 'blaze'
 
   function later(fn, ms) {
     timers.current.push(setTimeout(fn, ms))
@@ -66,6 +70,7 @@ export default function SceneEngine({ room, onExit }) {
     if (stage !== 'scene') return
     const iv = setInterval(() => {
       if (Date.now() < frozenRef.current) return // הזמן קפוא!
+      if (blazeHeat && overlayRef.current) return // חום האש - חידות בנחת
       setSeconds((s) => {
         secondsRef.current = s + 1
         return s + 1
@@ -99,6 +104,8 @@ export default function SceneEngine({ room, onExit }) {
     mistake: () => { mistakesRef.current += 1 },
     // כוח האוזן הביונית - זמין בתוך מנעולי הקשבה אם רובו ניצל
     slow: rescued.includes('robo'),
+    // כוכב הנינג'ה - מעלים תשובות שגויות במנעולי הקשבה
+    ninja: rescued.includes('ninja') && room.rescue !== 'ninja',
     parrot(en, he) {
       setBubble({ en, he, key: Date.now() })
       say(en)
@@ -363,7 +370,8 @@ export default function SceneEngine({ room, onExit }) {
               <div className="mt-2 flex gap-2 justify-center">
                 {myHeroes.map((hero) => {
                   const onCd = (powerCd[hero.power.id] || 0) > Date.now()
-                  if (hero.power.passive) {
+                  // כוחות פסיביים + כוחות שחיים בתוך מנעולי הקשבה (צב/כוכב) - תג הסבר בלבד
+                  if (hero.power.passive || hero.power.id === 'slow' || hero.power.id === 'shuriken') {
                     // כוח פסיבי - תג בלבד, לחיצה מסבירה
                     return (
                       <button
